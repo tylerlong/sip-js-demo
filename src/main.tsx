@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {Button, Form, Input, message, Select} from 'antd';
 import localforage from 'localforage';
 import RingCentral from '@rc-ex/core';
+import {Inviter, SessionState, UserAgent, Registerer} from 'sip.js';
 
 class LoginForm {
   serverUrl!: string;
@@ -50,7 +51,7 @@ const App = () => {
   };
 
   const postLogin = async () => {
-    const sipInfo = await rc
+    const r = await rc
       .restapi()
       .clientInfo()
       .sipProvision()
@@ -61,6 +62,56 @@ const App = () => {
           },
         ],
       });
+    const sipInfo = r.sipInfo![0];
+    console.log(JSON.stringify(sipInfo, null, 2));
+
+    // Create user agent instance (caller)
+    const userAgent = new UserAgent({
+      uri: UserAgent.makeURI(`sip:${sipInfo.username}@${sipInfo.domain}`),
+      transportOptions: {
+        server: `wss://${sipInfo.outboundProxy}`,
+      },
+      authorizationUsername: sipInfo.authorizationId,
+      authorizationPassword: sipInfo.password,
+    });
+
+    // Connect the user agent
+    await userAgent.start();
+    // Set target destination (callee)
+    const target = UserAgent.makeURI(`sip:16506417402@${sipInfo.domain}`);
+    if (!target) {
+      throw new Error('Failed to create target URI.');
+    }
+
+    const registerer = new Registerer(userAgent);
+    await registerer.register();
+
+    // Create a user agent client to establish a session
+    const inviter = new Inviter(userAgent, target, {
+      sessionDescriptionHandlerOptions: {
+        constraints: {audio: true, video: false},
+      },
+    });
+
+    // Handle outgoing session state changes
+    inviter.stateChange.addListener(newState => {
+      switch (newState) {
+        case SessionState.Establishing:
+          // Session is establishing
+          break;
+        case SessionState.Established:
+          // Session has been established
+          break;
+        case SessionState.Terminated:
+          // Session has terminated
+          break;
+        default:
+          break;
+      }
+    });
+
+    // Send initial INVITE request
+    await inviter.invite();
   };
 
   const [form] = Form.useForm();

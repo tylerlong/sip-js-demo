@@ -3704,6 +3704,11 @@ signal-exit@^3.0.2, signal-exit@^3.0.3:
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.7.tgz#a9a1767f8af84155114eaabd73f99273c8f59ad9"
   integrity sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==
 
+sip.js@^0.20.1:
+  version "0.20.1"
+  resolved "https://registry.yarnpkg.com/sip.js/-/sip.js-0.20.1.tgz#f696202ffb55bea3fbdd2683dd7947ef6296e8f2"
+  integrity sha512-ThyBGdUqEYHZKFBIty2bwUlcgIAVoCtmwpKsCl8HNCsvlBUDoNRIBxUruFkmNQx8e+3iV8RPukF5VhZOmQSEiA==
+
 slash@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/slash/-/slash-3.0.0.tgz#6539be870c165adbd5240220dbe361f1bc4d4634"
